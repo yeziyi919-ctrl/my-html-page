@@ -1,0 +1,2684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>my archive :)</title>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="卡片档案">
+<meta name="theme-color" content="#FAFAFC">
+<style>
+  :root{
+    --bg-screen: #FAFAFC;
+    --bg-soft: #F2F2F7;
+    --ink-1: #1A1A20;
+    --ink-2: #858791;
+    --ink-3: #B8B9C0;
+    --line: #ECECF1;
+    --purple-1: #8B7BEB;
+    --purple-2: #6F5EE7;
+    --purple-3: #5F4ED4;
+    --purple-soft: #EFEBFE;
+    --gold: #E8B84A;
+    --gold-soft: #FBF3DD;
+    --danger: #D85050;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    background: var(--bg-screen);
+    color: var(--ink-1);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  body { overflow-x: hidden; }
+
+  .app {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px 16px 100px;
+    min-height: 100vh;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding: 4px 2px 0;
+  }
+  .header-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F4F0FE 100%);
+    border: 1px solid rgba(139,123,235,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-shadow:
+      0 2px 8px rgba(111,94,231,0.10),
+      inset 0 1px 0 rgba(255,255,255,1);
+    transition: border-color .2s, transform .2s;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .header-avatar:active { border-color: var(--purple-1); transform: scale(0.96); }
+  .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .header-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .header-title {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    background: linear-gradient(135deg, #2A2538 0%, #4A4060 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .header-sub {
+    font-size: 12px;
+    color: var(--ink-2);
+    margin-top: 4px;
+    letter-spacing: 0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header-count {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--ink-2);
+    background: var(--purple-soft);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .mode-switch-wrap {
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 10;
+  }
+  .mode-switch {
+    display: flex;
+    position: relative;
+    background: rgba(236, 236, 241, 0.7);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 4px;
+    width: 100%;
+    box-shadow:
+      inset 1px 1px 4px rgba(255, 255, 255, 0.9),
+      inset -1px -1px 6px rgba(80, 70, 120, 0.08),
+      0 2px 8px rgba(80, 70, 120, 0.04);
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: var(--ink-2);
+    background: transparent;
+    border: 0;
+    border-radius: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    transition: color 0.35s ease-in-out;
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+  }
+  .mode-btn.active { color: #fff; }
+  .mode-glider {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc((100% - 8px) / 2);
+    border-radius: 12px;
+    z-index: 1;
+    transition: transform 0.5s cubic-bezier(0.37, 1.95, 0.66, 0.56);
+    background: linear-gradient(135deg, #8B7BEB 0%, #6F5EE7 55%, #5F4ED4 100%);
+    box-shadow:
+      0 2px 8px rgba(111, 94, 231, 0.20),
+      0 0 4px rgba(200, 190, 255, 0.15) inset;
+    pointer-events: none;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn .2s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .search {
+    height: 44px;
+    background: rgba(242,242,247,0.8);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139,123,235,0.08);
+    border-radius: 14px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    transition: all .2s;
+  }
+  .search:focus-within {
+    border-color: rgba(139,123,235,0.35);
+    box-shadow: 0 0 0 4px rgba(139,123,235,0.06);
+  }
+  .search input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink-1);
+    min-width: 0;
+  }
+  .search input::placeholder { color: var(--ink-3); }
+  .search svg { color: var(--ink-2); flex-shrink: 0; }
+
+  .cats {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 2px 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cats::-webkit-scrollbar { display: none; }
+  .cat {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.8);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139,123,235,0.1);
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+    box-shadow: 0 1px 3px rgba(80,70,120,0.03);
+    touch-action: manipulation;
+  }
+  .cat:active { transform: scale(0.96); }
+  .cat.active {
+    background: linear-gradient(135deg, #8B7BEB 0%, #6F5EE7 55%, #5F4ED4 100%);
+    color: #FFFFFF;
+    border-color: transparent;
+    box-shadow:
+      0 2px 6px rgba(111,94,231,0.18),
+      0 0 0 1px rgba(255,255,255,0.2) inset;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .filter-chip {
+    padding: 7px 14px;
+    background: rgba(255,255,255,0.8);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139,123,235,0.1);
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 1px 3px rgba(80,70,120,0.03);
+    touch-action: manipulation;
+  }
+  .filter-chip.active {
+    background: linear-gradient(135deg, #8B7BEB 0%, #6F5EE7 55%, #5F4ED4 100%);
+    color: #FFFFFF;
+    border-color: transparent;
+    box-shadow:
+      0 2px 6px rgba(111,94,231,0.18),
+      0 0 0 1px rgba(255,255,255,0.2) inset;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .card {
+    position: relative;
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+    height: 178px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform .3s cubic-bezier(.4,0,.2,1), border-color .3s;
+    isolation: isolate;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+  }
+  .card:active {
+    transform: translateY(-1px) scale(0.99);
+    border-color: rgba(139,123,235,0.28);
+  }
+  @media (hover: hover) {
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(139,123,235,0.28);
+    }
+    .card:hover .card__shine { transform: translateX(130%); }
+    .card:hover .card__glow { opacity: 1; }
+  }
+
+  .card__shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg,
+      transparent 30%,
+      rgba(255,255,255,0) 38%,
+      rgba(255,255,255,0.7) 48%,
+      rgba(255,255,255,0.9) 50%,
+      rgba(255,255,255,0.7) 52%,
+      rgba(255,255,255,0) 62%,
+      transparent 70%);
+    transform: translateX(-130%);
+    transition: transform .9s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+    z-index: 3;
+    border-radius: inherit;
+    mix-blend-mode: overlay;
+  }
+  .card__glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% -20%, rgba(139,123,235,0.14), transparent 65%),
+      radial-gradient(circle at 20% 110%, rgba(232,184,74,0.06), transparent 55%);
+    opacity: 0;
+    transition: opacity .35s;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+  }
+  .card__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+  }
+  .card__badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #F4F1FE 0%, #EAE4FB 100%);
+    color: var(--purple-2);
+    border: 1px solid rgba(139,123,235,0.18);
+    box-shadow: 0 1px 3px rgba(111,94,231,0.06);
+    z-index: 4;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .card__image {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    background: var(--bg-color, #EEEEF3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: rgba(30,25,45,0.7);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .card__image img { width: 100%; height: 100%; object-fit: cover; }
+  .card__image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(160deg, rgba(255,255,255,0.35) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .card__text {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .card__title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--ink-1);
+    letter-spacing: -0.2px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+  .card__description {
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+  .card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+  .card__date {
+    font-size: 10px;
+    color: var(--ink-3);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .card__button {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 0;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F4F1FE 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--purple-2);
+    cursor: pointer;
+    transition: all .2s;
+    flex-shrink: 0;
+    padding: 0;
+    box-shadow:
+      0 1px 3px rgba(111,94,231,0.08),
+      inset 0 1px 0 rgba(255,255,255,1),
+      0 0 0 1px rgba(139,123,235,0.10);
+    touch-action: manipulation;
+  }
+  .card__button:active { transform: scale(0.92); }
+  .card__button.gold {
+    background: linear-gradient(135deg, #FFF9E5 0%, #FBEDB5 100%);
+    color: #A67C1D;
+    box-shadow:
+      0 1px 3px rgba(232,184,74,0.14),
+      inset 0 1px 0 rgba(255,255,255,1),
+      0 0 0 1px rgba(232,184,74,0.22);
+  }
+  .card__button svg { width: 13px; height: 13px; }
+
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-3);
+  }
+  .empty-emoji { font-size: 34px; margin-bottom: 10px; }
+  .empty-sub { font-size: 12px; margin-top: 6px; }
+
+  .guide-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 2px 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .guide-tabs::-webkit-scrollbar { display: none; }
+  .guide-tab {
+    flex-shrink: 0;
+    padding: 9px 16px;
+    background: rgba(255,255,255,0.85);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139,123,235,0.12);
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+    box-shadow: 0 1px 3px rgba(80,70,120,0.03);
+    touch-action: manipulation;
+  }
+  .guide-tab:active { transform: scale(0.96); }
+  .guide-tab.active {
+    background: linear-gradient(135deg, #8B7BEB 0%, #6F5EE7 55%, #5F4ED4 100%);
+    color: #FFFFFF;
+    border-color: transparent;
+    font-weight: 700;
+    box-shadow:
+      0 2px 6px rgba(111,94,231,0.18),
+      0 0 0 1px rgba(255,255,255,0.2) inset;
+  }
+  .guide-tab.manage-tab {
+    background: rgba(255,255,255,0.6);
+    color: var(--ink-3);
+    font-weight: 600;
+    border-style: dashed;
+  }
+
+  .guide-body {
+    display: flex;
+    height: calc(100vh - 250px);
+    height: calc(100svh - 250px);
+    min-height: 380px;
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .guide-chapters {
+    width: 128px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    padding: 8px 4px 8px 8px;
+    -webkit-overflow-scrolling: touch;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  .guide-chapters::-webkit-scrollbar { display: none; }
+
+  .guide-chapters-inner {
+    background: rgba(242,242,247,0.9);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 4px;
+    min-height: 100%;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 2px rgba(80,70,120,0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .chapter-item {
+    padding: 12px 12px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    font-weight: 500;
+    border-radius: 12px;
+    cursor: pointer;
+    line-height: 1.35;
+    transition: all .2s;
+    word-break: break-word;
+    touch-action: manipulation;
+    position: relative;
+    z-index: 1;
+  }
+  .chapter-item.active {
+    background: linear-gradient(135deg, #FFFFFF 0%, #FBFAFF 100%);
+    color: var(--ink-1);
+    font-weight: 700;
+    box-shadow:
+      0 1px 4px rgba(111,94,231,0.08),
+      0 0 0 1px rgba(139,123,235,0.10);
+  }
+  .chapter-item:active { background: rgba(255,255,255,0.7); }
+
+  .guide-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 14px 24px;
+    min-width: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .guide-content::-webkit-scrollbar { width: 4px; }
+  .guide-content::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+  .guide-section-head {
+    padding: 4px 2px 12px;
+  }
+  .guide-section-head .eyebrow {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--purple-2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .guide-section-head .title {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--ink-1);
+    letter-spacing: -0.3px;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+
+  .guide-right-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--purple-2);
+    letter-spacing: 0.2px;
+    padding: 16px 4px 8px;
+    word-break: break-word;
+    line-height: 1.3;
+  }
+  .guide-right-group::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--purple-2);
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(111,94,231,0.14);
+  }
+  .guide-right-group:first-of-type {
+    padding-top: 4px;
+  }
+
+  .guide-item {
+    position: relative;
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 13px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    overflow: hidden;
+    transition: transform .25s cubic-bezier(.4,0,.2,1), border-color .25s;
+    isolation: isolate;
+    touch-action: manipulation;
+  }
+  .guide-item:active {
+    transform: translateY(-1px) scale(0.995);
+    border-color: rgba(139,123,235,0.28);
+  }
+  @media (hover: hover) {
+    .guide-item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(139,123,235,0.28);
+    }
+    .guide-item:hover .guide-item__shine { transform: translateX(130%); }
+    .guide-item:hover .guide-item__glow { opacity: 1; }
+  }
+
+  .guide-item__shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg,
+      transparent 30%,
+      rgba(255,255,255,0) 38%,
+      rgba(255,255,255,0.65) 48%,
+      rgba(255,255,255,0.85) 50%,
+      rgba(255,255,255,0.65) 52%,
+      rgba(255,255,255,0) 62%,
+      transparent 70%);
+    transform: translateX(-130%);
+    transition: transform .9s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+    z-index: 3;
+    border-radius: inherit;
+    mix-blend-mode: overlay;
+  }
+  .guide-item__glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% -20%, rgba(139,123,235,0.12), transparent 65%);
+    opacity: 0;
+    transition: opacity .35s;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+  }
+  .guide-item__body {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    min-width: 0;
+  }
+  .guide-item__title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-1);
+    margin-bottom: 4px;
+    letter-spacing: -0.2px;
+    word-break: break-word;
+  }
+  .guide-item__excerpt {
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+  .guide-item__fav {
+    display: none;
+    position: relative;
+    z-index: 2;
+    color: var(--gold);
+    font-size: 16px;
+    flex-shrink: 0;
+    line-height: 1;
+    padding: 2px 4px;
+    cursor: pointer;
+    text-shadow: 0 0 4px rgba(232,184,74,0.3);
+    align-self: flex-start;
+  }
+  .guide-item__fav.on { display: block; }
+
+  .guide-item.faved {
+  }
+
+  .guide-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--ink-3);
+    font-size: 12.5px;
+  }
+  .guide-empty-emoji { font-size: 32px; margin-bottom: 10px; }
+  .guide-empty-sub { font-size: 11px; margin-top: 6px; }
+
+  .guide-fav-card {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: transform .2s, border-color .2s;
+    touch-action: manipulation;
+  }
+  .guide-fav-card:active { transform: scale(0.99); border-color: rgba(139,123,235,0.28); }
+  .guide-fav-title {
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    color: var(--ink-1);
+    word-break: break-word;
+  }
+  .guide-fav-title .s { color: var(--gold); font-size: 16px; flex-shrink: 0; text-shadow: 0 0 4px rgba(232,184,74,0.3); }
+  .guide-fav-meta {
+    font-size: 10.5px;
+    color: var(--ink-2);
+    word-break: break-word;
+  }
+
+  .fab {
+    position: fixed;
+    right: max(20px, calc((100vw - 720px) / 2 + 20px));
+    bottom: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 0;
+    background: linear-gradient(135deg, var(--purple-1) 0%, var(--purple-2) 55%, var(--purple-3) 100%);
+    color: #FFFFFF;
+    font-size: 26px;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 20;
+    box-shadow:
+      0 4px 14px rgba(111,94,231,0.22),
+      0 0 0 1px rgba(255,255,255,0.15) inset,
+      0 1px 0 rgba(255,255,255,0.3) inset;
+    transition: transform .2s;
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+  }
+  .fab:active { transform: scale(0.94); }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,28,42,0.42);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .overlay.show {
+    display: flex;
+    animation: fadeIn .2s ease;
+  }
+  .sheet {
+    background: linear-gradient(180deg, #FAFAFC 0%, #F6F4FB 100%);
+    width: 100%;
+    max-width: 720px;
+    max-height: 90vh;
+    max-height: 90svh;
+    border-radius: 28px 28px 0 0;
+    padding: 10px 20px calc(28px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: slideUp .3s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 -12px 40px rgba(80,70,120,0.14);
+  }
+  .sheet::-webkit-scrollbar { display: none; }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .sheet-grab {
+    width: 42px;
+    height: 4px;
+    background: rgba(139,123,235,0.25);
+    border-radius: 999px;
+    margin: 4px auto 16px;
+  }
+  .sheet-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink-1);
+    margin-bottom: 18px;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .detail-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .detail-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .detail-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .detail-meta {
+    font-size: 11px;
+    color: var(--purple-2);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    word-break: break-word;
+  }
+  .detail-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--ink-1);
+    letter-spacing: -0.3px;
+    word-break: break-word;
+  }
+
+  .entry-content {
+    background: rgba(255,255,255,0.85);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139,123,235,0.12);
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: #4A4558;
+    margin-bottom: 16px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 340px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: inset 0 1px 2px rgba(80,70,120,0.03);
+  }
+  .entry-content::-webkit-scrollbar { display: none; }
+
+  .entry-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.85);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139,123,235,0.12);
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: all .2s;
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+    box-shadow: 0 1px 3px rgba(80,70,120,0.04);
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn.copy {
+    background: linear-gradient(135deg, var(--purple-1) 0%, var(--purple-2) 55%, var(--purple-3) 100%);
+    color: #FFFFFF;
+    border-color: transparent;
+    box-shadow:
+      0 2px 8px rgba(111,94,231,0.15),
+      0 0 0 1px rgba(255,255,255,0.15) inset;
+  }
+  .btn.copy.done { background: #7DC7A2; }
+  .btn.edit {
+    background: linear-gradient(135deg, #F4F1FE 0%, #EAE4FB 100%);
+    color: var(--purple-2);
+    border-color: transparent;
+  }
+  .btn.del {
+    background: transparent;
+    color: var(--danger);
+    margin-left: auto;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--purple-1) 0%, var(--purple-2) 55%, var(--purple-3) 100%);
+    color: #FFFFFF;
+    border-color: transparent;
+    box-shadow:
+      0 2px 8px rgba(111,94,231,0.18),
+      0 0 0 1px rgba(255,255,255,0.15) inset;
+  }
+  .btn.primary:active { transform: scale(0.96); }
+  .btn.full { flex: 1; text-align: center; justify-content: center; }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--purple-2);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .field input[type="text"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    background: rgba(255,255,255,0.85);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139,123,235,0.12);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: var(--ink-1);
+    outline: 0;
+    transition: all .2s;
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: inset 0 1px 2px rgba(80,70,120,0.03);
+  }
+  .field textarea {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: rgba(139,123,235,0.4);
+    box-shadow: 0 0 0 4px rgba(139,123,235,0.06), inset 0 1px 2px rgba(80,70,120,0.03);
+  }
+
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .toggle {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle .slider {
+    position: absolute;
+    inset: 0;
+    background: rgba(139,123,235,0.2);
+    border-radius: 26px;
+    transition: background .2s;
+  }
+  .toggle .slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform .2s;
+    box-shadow: 0 1px 3px rgba(80,70,120,0.12);
+  }
+  .toggle input:checked + .slider {
+    background: linear-gradient(135deg, var(--purple-1) 0%, var(--purple-3) 100%);
+  }
+  .toggle input:checked + .slider::before { transform: translateX(18px); }
+  .toggle-label { font-size: 13px; color: var(--ink-2); font-weight: 600; }
+
+  .cover-upload { display: flex; align-items: center; gap: 14px; }
+  .cover-preview {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--purple-soft);
+    border: 1px solid rgba(139,123,235,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    overflow: hidden;
+    flex-shrink: 0;
+    font-weight: 600;
+    color: var(--purple-2);
+    box-shadow: inset 0 1px 2px rgba(80,70,120,0.03);
+  }
+  .cover-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .cover-btns { display: flex; flex-direction: column; gap: 6px; }
+  .cover-btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .sheet-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .cat-manage-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.85);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139,123,235,0.1);
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(80,70,120,0.03);
+  }
+  .cat-manage-row .cover-preview {
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
+  }
+  .cat-manage-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 0;
+    word-break: break-word;
+  }
+  .cat-manage-name .sub {
+    font-size: 11px;
+    color: var(--ink-2);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .cat-manage-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(139,123,235,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--purple-2);
+    transition: background .2s;
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+  }
+  .icon-btn:active { background: rgba(139,123,235,0.16); }
+  .icon-btn.del { color: var(--danger); background: rgba(216,80,80,0.08); }
+  .icon-btn.del:active { background: rgba(216,80,80,0.16); }
+
+  .data-manage-section {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1.5px dashed var(--line);
+  }
+  .data-manage-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--ink-2);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .import-preview {
+    background: rgba(255,255,255,0.85);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(139,123,235,0.12);
+    box-shadow: inset 0 1px 2px rgba(80,70,120,0.03);
+  }
+  .import-preview-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--line);
+    gap: 10px;
+  }
+  .import-preview-row:last-child { border-bottom: none; }
+  .import-preview-row .k {
+    color: var(--ink-2);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .import-preview-row .v {
+    font-weight: 700;
+    color: var(--ink-1);
+    text-align: right;
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: linear-gradient(135deg, var(--purple-1) 0%, var(--purple-2) 55%, var(--purple-3) 100%);
+    color: #FFFFFF;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 11px 20px;
+    border-radius: 999px;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    white-space: nowrap;
+    box-shadow:
+      0 4px 14px rgba(111,94,231,0.22),
+      0 0 0 1px rgba(255,255,255,0.15) inset;
+    letter-spacing: 0.3px;
+    max-width: calc(100vw - 40px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .hidden-file { display: none; }
+
+  @media (max-width: 380px) {
+    .app { padding: 16px 12px 90px; }
+    .header-title { font-size: 22px; }
+    .header-avatar { width: 48px; height: 48px; font-size: 20px; }
+    .grid { gap: 10px; }
+    .card { padding: 12px; height: 168px; }
+    .card__image { width: 38px; height: 38px; font-size: 15px; }
+    .card__title { font-size: 12.5px; }
+    .card__description { font-size: 10px; }
+    .guide-chapters { width: 105px; }
+    .chapter-item { font-size: 11.5px; padding: 10px 10px; }
+    .guide-section-head .title { font-size: 17px; }
+    .guide-right-group { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="header-avatar" id="userAvatar" title="点击上传头像">👤</div>
+    <input type="file" accept="image/*" class="hidden-file" id="userAvatarInput">
+    <div class="header-info">
+      <div class="header-title" id="titleDisplay" title="点击编辑标题">卡片档案</div>
+      <div class="header-sub" id="subtitleDisplay">my little</div>
+    </div>
+    <div class="header-count" id="countDisplay">0 条</div>
+  </div>
+
+  <div class="mode-switch-wrap">
+    <div class="mode-switch">
+      <button class="mode-btn active" data-mode="card" id="modeBtnCard">卡片档案</button>
+      <button class="mode-btn" data-mode="guide" id="modeBtnGuide">剧情指导</button>
+      <div class="mode-glider" id="modeGlider"></div>
+    </div>
+  </div>
+
+  <div class="view active" id="cardView">
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+        <path d="M16 16L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="搜索标题或内容">
+    </div>
+    <div class="cats" id="catRow"></div>
+    <div class="filter-row" id="filterRow"></div>
+    <div class="grid" id="cardGrid"></div>
+  </div>
+
+  <div class="view" id="guideView">
+    <div class="guide-tabs" id="guideTabs"></div>
+    <div class="guide-body">
+      <div class="guide-chapters" id="chapterList"></div>
+      <div class="guide-content" id="guideContent"></div>
+    </div>
+  </div>
+</div>
+
+<button class="fab" id="fabAdd" aria-label="新建">+</button>
+
+<div class="overlay" id="titleOverlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="sheet-title">✎ 编辑标题</div>
+    <div class="field">
+      <label>大标题</label>
+      <input type="text" id="editMainTitle" placeholder="例如：卡片档案">
+    </div>
+    <div class="field">
+      <label>副标题</label>
+      <input type="text" id="editSubtitle" placeholder="例如：my little">
+    </div>
+    <div class="sheet-actions">
+      <button class="btn full" id="titleCancelBtn">取消</button>
+      <button class="btn primary full" id="titleSaveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="sheet-title" id="sheetTitle">✎ 新建条目</div>
+    <div class="field">
+      <label>分类</label>
+      <select id="fCategory"></select>
+    </div>
+    <div class="field">
+      <label>标题</label>
+      <input type="text" id="fTitle" placeholder="例如：面具 · 姜疆">
+    </div>
+    <div class="field">
+      <label>正文内容</label>
+      <textarea id="fContent" placeholder="粘贴或输入正文内容…"></textarea>
+    </div>
+    <div class="field">
+      <label>置顶收藏</label>
+      <div class="toggle-wrap">
+        <label class="toggle">
+          <input type="checkbox" id="fPinned">
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label" id="fPinnedLabel">关闭</span>
+      </div>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn full" id="cancelBtn">取消</button>
+      <button class="btn primary full" id="saveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="catManageOverlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="sheet-title">🗂 管理分类</div>
+    <div id="catManageList"></div>
+    <div class="sheet-actions">
+      <button class="btn primary full" id="catAddNewBtn">+ 新建分类</button>
+    </div>
+    <div class="data-manage-section">
+      <div class="data-manage-title">数据备份</div>
+      <div class="sheet-actions">
+        <button class="btn full" id="exportBtn">📤 导出数据</button>
+        <button class="btn full" id="importBtn">📥 导入数据</button>
+      </div>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn full" id="catManageCloseBtn">完成</button>
+    </div>
+    <input type="file" accept=".json,application/json" class="hidden-file" id="importFileInput">
+  </div>
+</div>
+
+<div class="overlay" id="catOverlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="sheet-title" id="catSheetTitle">✦ 新建分类</div>
+    <div class="field">
+      <label>封面</label>
+      <div class="cover-upload">
+        <div class="cover-preview" id="coverPreview">🖼</div>
+        <div class="cover-btns">
+          <div class="cover-btn-row">
+            <button class="btn" id="uploadCoverBtn">上传图片</button>
+            <button class="btn" id="clearCoverBtn">清除</button>
+          </div>
+        </div>
+        <input type="file" accept="image/*" class="hidden-file" id="coverFileInput">
+      </div>
+    </div>
+    <div class="field">
+      <label>分类名称</label>
+      <input type="text" id="newCatName" placeholder="例如：世界观">
+    </div>
+    <div class="sheet-actions">
+      <button class="btn full" id="catCancelBtn">取消</button>
+      <button class="btn primary full" id="catSaveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="detailOverlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="detail-header" id="detailHeaderHtml"></div>
+    <div class="entry-content" id="detailContent"></div>
+    <div class="entry-actions">
+      <button class="btn copy" id="detailCopyBtn">复制全文</button>
+      <button class="btn edit" id="detailEditBtn">✎ 编辑</button>
+      <button class="btn" id="detailPinBtn">☆ 收藏</button>
+      <button class="btn del" id="detailDelBtn">删除</button>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn full" id="detailCloseBtn">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="guideManageOverlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="sheet-title">📚 管理剧情指导</div>
+    <div id="guideManageList"></div>
+    <div class="sheet-actions">
+      <button class="btn primary full" id="guideImportBtn">📥 导入 md / txt</button>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn full" id="guideManageCloseBtn">完成</button>
+    </div>
+    <input type="file" accept=".md,.markdown,.txt,text/plain,text/markdown" class="hidden-file" id="guideImportInput">
+  </div>
+</div>
+
+<div class="overlay" id="guidePreviewOverlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="sheet-title">🔍 解析预览</div>
+    <div id="guidePreviewBody"></div>
+    <div class="sheet-actions">
+      <button class="btn full" id="guidePreviewCancelBtn">取消</button>
+      <button class="btn primary full" id="guidePreviewConfirmBtn">确认导入</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="guideItemOverlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="detail-header">
+      <div class="detail-avatar" style="background:var(--purple-soft);color:var(--purple-2);">🎬</div>
+      <div style="flex:1;min-width:0;">
+        <div class="detail-meta" id="gDetailMeta">篇章 · 章节</div>
+        <div class="detail-title" id="gDetailTitle">条目名称</div>
+      </div>
+    </div>
+    <div class="entry-content" id="gDetailContent"></div>
+    <div class="entry-actions">
+      <button class="btn edit" id="gDetailEditBtn">✎ 编辑</button>
+      <button class="btn" id="gDetailFavBtn">☆ 收藏</button>
+      <button class="btn del" id="gDetailDelBtn">删除</button>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn full" id="gDetailCloseBtn">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="guideEditOverlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="sheet-title">✎ 编辑条目</div>
+    <div class="field">
+      <label>条目标题</label>
+      <input type="text" id="gEditTitle" placeholder="条目名称">
+    </div>
+    <div class="field">
+      <label>正文内容</label>
+      <textarea id="gEditContent" placeholder="正文"></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn full" id="gEditCancelBtn">取消</button>
+      <button class="btn primary full" id="gEditSaveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="guideRenameOverlay">
+  <div class="sheet">
+    <div class="sheet-grab"></div>
+    <div class="sheet-title">✎ 重命名篇章</div>
+    <div class="field">
+      <label>篇章名称</label>
+      <input type="text" id="gRenameInput" placeholder="例如：韩娱篇">
+    </div>
+    <div class="sheet-actions">
+      <button class="btn full" id="gRenameCancelBtn">取消</button>
+      <button class="btn primary full" id="gRenameSaveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'card-archive-data-v4';
+const CAT_COLORS = ['#f2d4f6','#fae29c','#cde6fc','#ddefe3','#d3defb'];
+
+let state = {
+  categories: [
+    { id: 'mask', name: '面具', cover: null },
+    { id: 'npc', name: 'NPC', cover: null },
+    { id: 'status', name: '状态栏', cover: null },
+    { id: 'cmd', name: '指令', cover: null },
+    { id: 'extra', name: '番外', cover: null }
+  ],
+  cards: [],
+  guides: [],
+  activeTab: 'all',
+  activeFilter: 'edited',
+  activeGuide: null,
+  activeGuideSection: null,
+  guideShowFav: false,
+  userAvatar: null,
+  mainTitle: '卡片档案',
+  subtitle: 'my little',
+  currentMode: 'card'
+};
+
+let currentDetailId = null;
+let editingId = null;
+let editingCatId = null;
+let pendingCoverData = null;
+let pendingImport = null;
+let currentGuideItem = null;
+let editingGuideItem = null;
+let renamingGuideId = null;
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function $(id){ return document.getElementById(id); }
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str == null ? '' : str;
+  return d.innerHTML;
+}
+function showToast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(()=> t.classList.remove('show'), 1600);
+}
+function copyText(text, btnEl){
+  const doCopy = async ()=>{
+    try { await navigator.clipboard.writeText(text); }
+    catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+  };
+  doCopy().then(()=>{
+    showToast('已复制 ♡');
+    if(btnEl){
+      btnEl.classList.add('done');
+      const orig = btnEl.textContent;
+      btnEl.textContent = '已复制 ✓';
+      setTimeout(()=>{
+        btnEl.classList.remove('done');
+        btnEl.textContent = orig;
+      }, 1200);
+    }
+  });
+}
+function compressImage(file, maxSize, quality){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w > h && w > maxSize){ h = h * (maxSize / w); w = maxSize; }
+        else if(h > maxSize){ w = w * (maxSize / h); h = maxSize; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function withTimeout(promise, ms){
+  return Promise.race([promise, new Promise((_, reject)=> setTimeout(()=> reject(new Error('timeout')), ms))]);
+}
+function hasClaudeStorage(){
+  return !!(window.storage && typeof window.storage.get === 'function' && typeof window.storage.set === 'function');
+}
+function hasLocalStorage(){
+  try { const t = '__' + Date.now(); localStorage.setItem(t, '1'); localStorage.removeItem(t); return true; }
+  catch(e){ return false; }
+}
+async function loadData(){
+  let raw = null;
+  if(hasClaudeStorage()){
+    try { const res = await withTimeout(window.storage.get(STORAGE_KEY, false), 5000); if(res && res.value) raw = res.value; } catch(e){}
+  }
+  if(raw === null && hasLocalStorage()){
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch(e){}
+  }
+  if(raw){
+    try {
+      const parsed = JSON.parse(raw);
+      if(parsed.categories) state.categories = parsed.categories;
+      if(parsed.cards) state.cards = parsed.cards;
+      if(parsed.guides) state.guides = parsed.guides;
+      if(parsed.userAvatar !== undefined) state.userAvatar = parsed.userAvatar;
+      if(parsed.mainTitle) state.mainTitle = parsed.mainTitle;
+      if(parsed.subtitle !== undefined) state.subtitle = parsed.subtitle;
+    } catch(e){}
+  }
+  state.cards.forEach(c => {
+    if (c.pinned === undefined) c.pinned = false;
+    if (c.createdAt === undefined) c.createdAt = c.updatedAt || Date.now();
+  });
+  (state.guides || []).forEach(g => {
+    (g.sections || []).forEach(s => {
+      (s.items || []).forEach(it => {
+        if (it.faved === undefined) it.faved = false;
+        if (it.group === undefined) it.group = '';
+      });
+    });
+  });
+  if (state.guides.length > 0 && !state.activeGuide){
+    state.activeGuide = state.guides[0].id;
+  }
+  renderAll();
+}
+async function saveData(){
+  const payload = JSON.stringify({
+    categories: state.categories,
+    cards: state.cards,
+    guides: state.guides,
+    userAvatar: state.userAvatar,
+    mainTitle: state.mainTitle,
+    subtitle: state.subtitle
+  });
+  let ok = false;
+  if(hasClaudeStorage()){
+    try { await withTimeout(window.storage.set(STORAGE_KEY, payload, false), 5000); ok = true; } catch(e){}
+  }
+  if(hasLocalStorage()){
+    try { localStorage.setItem(STORAGE_KEY, payload); ok = true; } catch(e){}
+  }
+  if(!ok) showToast('⚠️ 保存失败！请导出备份');
+}
+
+function catObj(id){ return state.categories.find(c => c.id === id); }
+function catName(id){ const c = catObj(id); return c ? c.name : '未分类'; }
+function isStatusCategory(cat){ return cat && cat.name === '状态栏'; }
+function getCategoryColor(catId){
+  const idx = state.categories.findIndex(c => c.id === catId);
+  return CAT_COLORS[idx >= 0 ? idx % CAT_COLORS.length : 0];
+}
+
+function renderTitle(){
+  const titleEl = $('titleDisplay');
+  const subEl = $('subtitleDisplay');
+  const countEl = $('countDisplay');
+  titleEl.textContent = state.mainTitle || '卡片档案';
+  subEl.textContent = state.subtitle || 'my little';
+  const list = getFilteredCards();
+  countEl.textContent = list.length + ' 条';
+}
+function renderAvatar(){
+  const el = $('userAvatar');
+  if (state.userAvatar) el.innerHTML = `<img src="${state.userAvatar}" alt="avatar">`;
+  else el.innerHTML = '👤';
+}
+
+function renderTabs(){
+  const wrap = $('catRow');
+  wrap.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'cat' + (state.activeTab === 'all' ? ' active' : '');
+  allBtn.textContent = '全部';
+  allBtn.onclick = ()=>{ state.activeTab = 'all'; renderAll(); };
+  wrap.appendChild(allBtn);
+
+  state.categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat' + (state.activeTab === cat.id ? ' active' : '');
+    btn.textContent = cat.name;
+    btn.onclick = ()=>{ state.activeTab = cat.id; renderAll(); };
+    wrap.appendChild(btn);
+  });
+
+  const manageBtn = document.createElement('button');
+  manageBtn.className = 'cat';
+  manageBtn.textContent = '⚙ 管理';
+  manageBtn.onclick = openCatManage;
+  wrap.appendChild(manageBtn);
+}
+
+function renderFilterRow(){
+  const wrap = $('filterRow');
+  wrap.innerHTML = '';
+  const options = [
+    { id: 'edited', label: '最近编辑' },
+    { id: 'created', label: '最近创建' },
+    { id: 'favorite', label: '收藏' }
+  ];
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-chip' + (state.activeFilter === opt.id ? ' active' : '');
+    btn.textContent = opt.label;
+    btn.onclick = ()=>{ state.activeFilter = opt.id; renderAll(); };
+    wrap.appendChild(btn);
+  });
+}
+
+function getFilteredCards(){
+  const q = ($('searchInput').value || '').trim().toLowerCase();
+  let list = state.cards.filter(c => {
+    const matchTab = state.activeTab === 'all' || c.categoryId === state.activeTab;
+    const matchQ = !q ||
+      (c.title || '').toLowerCase().includes(q) ||
+      (c.content || '').toLowerCase().includes(q);
+    return matchTab && matchQ;
+  });
+  if (state.activeFilter === 'favorite') list = list.filter(c => c.pinned);
+  list.sort((a,b) => {
+    if ((b.pinned ? 1 : 0) !== (a.pinned ? 1 : 0)){
+      return (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0);
+    }
+    if (state.activeFilter === 'created'){
+      return (b.createdAt || b.updatedAt || 0) - (a.createdAt || a.updatedAt || 0);
+    }
+    return (b.updatedAt || 0) - (a.updatedAt || 0);
+  });
+  return list;
+}
+
+function renderStack(){
+  const grid = $('cardGrid');
+  const list = getFilteredCards();
+  if (list.length === 0){
+    grid.innerHTML = `<div class="empty">
+      <div class="empty-emoji">🎀</div>
+      空空如也
+      <div class="empty-sub">点右下角 + 新建第一条记录吧</div>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(card => {
+    const cat = catObj(card.categoryId);
+    const catColor = getCategoryColor(card.categoryId);
+    const isStatus = isStatusCategory(cat);
+    let avatarContent;
+    if (cat && cat.cover) avatarContent = `<img src="${cat.cover}" alt="">`;
+    else avatarContent = cat ? escapeHtml(cat.name.charAt(0)) : '?';
+    const avatarBg = isStatus ? 'var(--bg-soft)' : catColor;
+    const avatarColor = isStatus ? 'var(--ink-2)' : '#fff';
+    const date = card.updatedAt
+      ? new Date(card.updatedAt).toLocaleDateString('zh-CN', { month:'2-digit', day:'2-digit' })
+      : '';
+    let excerpt = card.content || '';
+    if (excerpt.length === 0) excerpt = '（无内容）';
+
+    const starIcon = card.pinned
+      ? '<path d="M12 3.8l2.4 5 5.5.8-4 3.9.9 5.5L12 16.5l-4.8 2.5.9-5.5-4-3.9 5.5-.8L12 3.8z" stroke="currentColor" stroke-width="1.8" fill="currentColor"/>'
+      : '<path d="M12 3.8l2.4 5 5.5.8-4 3.9.9 5.5L12 16.5l-4.8 2.5.9-5.5-4-3.9 5.5-.8L12 3.8z" stroke="currentColor" stroke-width="1.8" fill="none"/>';
+
+    return `<div class="card" data-card="${card.id}">
+      <div class="card__glow"></div>
+      <div class="card__shine"></div>
+      <div class="card__content">
+        <div class="card__badge">${escapeHtml(catName(card.categoryId))}</div>
+        <div class="card__image" style="--bg-color:${avatarBg};${isStatus ? 'color:var(--ink-2);' : 'color:'+avatarColor+';'}">${avatarContent}</div>
+        <div class="card__text">
+          <div class="card__title">${escapeHtml(card.title || '（无标题）')}</div>
+          <div class="card__description">${escapeHtml(excerpt)}</div>
+        </div>
+        <div class="card__footer">
+          <span class="card__date">${date}</span>
+          <button class="card__button${card.pinned ? ' gold' : ''}" data-card-fav="${card.id}" aria-label="收藏">
+            <svg viewBox="0 0 24 24">${starIcon}</svg>
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openDetailModal(cardId){
+  const card = state.cards.find(c => c.id === cardId);
+  if (!card) return;
+  currentDetailId = cardId;
+
+  const cat = catObj(card.categoryId);
+  const catColor = getCategoryColor(card.categoryId);
+  const isStatus = isStatusCategory(cat);
+  let avatarContent;
+  if (cat && cat.cover) avatarContent = `<img src="${cat.cover}" alt="">`;
+  else avatarContent = cat ? escapeHtml(cat.name.charAt(0)) : '?';
+  const avatarBg = isStatus ? 'var(--bg-soft)' : catColor;
+  const avatarColor = isStatus ? 'var(--ink-2)' : '#fff';
+  const date = card.updatedAt
+    ? new Date(card.updatedAt).toLocaleString('zh-CN', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' })
+    : '';
+
+  $('detailHeaderHtml').innerHTML = `
+    <div class="detail-avatar" style="background:${avatarBg};color:${avatarColor};">${avatarContent}</div>
+    <div style="flex:1;min-width:0;">
+      <div class="detail-meta">${escapeHtml(catName(card.categoryId))} · ${date}</div>
+      <div class="detail-title">${escapeHtml(card.title || '（无标题）')}</div>
+    </div>
+  `;
+  $('detailContent').textContent = card.content || '';
+  $('detailPinBtn').textContent = card.pinned ? '★ 已收藏' : '☆ 收藏';
+  $('detailOverlay').classList.add('show');
+}
+function closeDetailModal(){
+  $('detailOverlay').classList.remove('show');
+  currentDetailId = null;
+}
+
+function populateCategorySelect(){
+  const sel = $('fCategory');
+  sel.innerHTML = '';
+  state.categories.forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat.id;
+    opt.textContent = cat.name;
+    sel.appendChild(opt);
+  });
+}
+function updateToggleLabel(){
+  $('fPinnedLabel').textContent = $('fPinned').checked ? '开启' : '关闭';
+}
+function openAddModal(){
+  editingId = null;
+  $('sheetTitle').textContent = '✎ 新建条目';
+  $('fTitle').value = '';
+  $('fContent').value = '';
+  $('fPinned').checked = false;
+  updateToggleLabel();
+  populateCategorySelect();
+  if (state.activeTab !== 'all') $('fCategory').value = state.activeTab;
+  $('overlay').classList.add('show');
+  setTimeout(()=> $('fTitle').focus(), 200);
+}
+function openEditModal(card){
+  editingId = card.id;
+  $('sheetTitle').textContent = '✎ 编辑条目';
+  $('fTitle').value = card.title || '';
+  $('fContent').value = card.content || '';
+  $('fPinned').checked = card.pinned || false;
+  updateToggleLabel();
+  populateCategorySelect();
+  $('fCategory').value = card.categoryId;
+  $('overlay').classList.add('show');
+}
+function closeModal(){ $('overlay').classList.remove('show'); }
+function saveEntry(){
+  const title = $('fTitle').value.trim();
+  const content = $('fContent').value.trim();
+  const categoryId = $('fCategory').value;
+  const pinned = $('fPinned').checked;
+  if (!content){ showToast('内容不能为空'); return; }
+  if (!categoryId){ showToast('请先创建一个分类'); return; }
+  if (editingId){
+    const card = state.cards.find(c => c.id === editingId);
+    if (card){
+      card.title = title;
+      card.content = content;
+      card.categoryId = categoryId;
+      card.pinned = pinned;
+      card.updatedAt = Date.now();
+    }
+  } else {
+    const now = Date.now();
+    state.cards.push({ id: uid(), title, content, categoryId, pinned, createdAt: now, updatedAt: now });
+  }
+  saveData();
+  closeModal();
+  renderAll();
+  showToast('已保存 ♡');
+}
+
+function openCatManage(){
+  renderCatManageList();
+  $('catManageOverlay').classList.add('show');
+}
+function closeCatManage(){ $('catManageOverlay').classList.remove('show'); }
+function renderCatManageList(){
+  const list = $('catManageList');
+  list.innerHTML = '';
+  state.categories.forEach(cat => {
+    const row = document.createElement('div');
+    row.className = 'cat-manage-row';
+    const coverHtml = cat.cover
+      ? `<img src="${cat.cover}" alt="">`
+      : `<span>${escapeHtml(cat.name ? cat.name.charAt(0) : '?')}</span>`;
+    row.innerHTML = `
+      <div class="cover-preview">${coverHtml}</div>
+      <div class="cat-manage-name">${escapeHtml(cat.name)}</div>
+      <div class="cat-manage-actions">
+        <button class="icon-btn edit-cat" aria-label="编辑">✎</button>
+        <button class="icon-btn del del-cat" aria-label="删除">✕</button>
+      </div>
+    `;
+    row.querySelector('.edit-cat').onclick = ()=> openCatModal(cat);
+    row.querySelector('.del-cat').onclick = ()=> deleteCategory(cat.id);
+    list.appendChild(row);
+  });
+}
+function deleteCategory(id){
+  const count = state.cards.filter(c => c.categoryId === id).length;
+  const msg = count > 0
+    ? `该分类下有 ${count} 条记录，删除分类会一并删除这些记录，确定继续吗？`
+    : '确定删除这个分类吗？';
+  if (!confirm(msg)) return;
+  state.categories = state.categories.filter(c => c.id !== id);
+  state.cards = state.cards.filter(c => c.categoryId !== id);
+  if (state.activeTab === id) state.activeTab = 'all';
+  saveData();
+  renderCatManageList();
+  renderAll();
+  showToast('分类已删除');
+}
+function openCatModal(existing){
+  editingCatId = existing ? existing.id : null;
+  pendingCoverData = existing ? existing.cover : null;
+  $('catSheetTitle').textContent = existing ? '✎ 编辑分类' : '✦ 新建分类';
+  $('newCatName').value = existing ? existing.name : '';
+  updateCoverPreview();
+  $('catOverlay').classList.add('show');
+  setTimeout(()=> $('newCatName').focus(), 200);
+}
+function closeCatModal(){ $('catOverlay').classList.remove('show'); }
+function updateCoverPreview(){
+  const preview = $('coverPreview');
+  if (pendingCoverData) preview.innerHTML = `<img src="${pendingCoverData}" alt="">`;
+  else preview.innerHTML = '🖼';
+}
+function saveCategory(){
+  const name = $('newCatName').value.trim();
+  if (!name){ showToast('请输入分类名称'); return; }
+  if (editingCatId){
+    const cat = catObj(editingCatId);
+    if (cat){ cat.name = name; cat.cover = pendingCoverData; }
+  } else {
+    const id = uid();
+    state.categories.push({ id, name, cover: pendingCoverData });
+    state.activeTab = id;
+  }
+  saveData();
+  closeCatModal();
+  renderCatManageList();
+  renderAll();
+  showToast('已保存 ♡');
+}
+
+function exportData(){
+  const payload = JSON.stringify({
+    categories: state.categories,
+    cards: state.cards,
+    guides: state.guides,
+    userAvatar: state.userAvatar,
+    mainTitle: state.mainTitle,
+    subtitle: state.subtitle,
+    exportedAt: new Date().toISOString()
+  }, null, 2);
+  const blob = new Blob([payload], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toLocaleDateString('zh-CN').replace(/\//g,'-');
+  a.href = url;
+  a.download = `卡片档案备份_${dateStr}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('已导出备份 ♡');
+}
+function importData(file){
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (!parsed.categories || !parsed.cards){ showToast('文件格式不正确'); return; }
+      if (!confirm('导入将覆盖当前所有数据，确定继续吗？')) return;
+      state.categories = parsed.categories;
+      state.cards = parsed.cards;
+      state.guides = parsed.guides || [];
+      if (parsed.userAvatar !== undefined) state.userAvatar = parsed.userAvatar;
+      if (parsed.mainTitle) state.mainTitle = parsed.mainTitle;
+      if (parsed.subtitle !== undefined) state.subtitle = parsed.subtitle;
+      state.activeTab = 'all';
+      state.activeFilter = 'edited';
+      state.activeGuide = state.guides.length > 0 ? state.guides[0].id : null;
+      state.guideShowFav = false;
+      state.activeGuideSection = null;
+      currentDetailId = null;
+      state.cards.forEach(c => {
+        if (c.pinned === undefined) c.pinned = false;
+        if (c.createdAt === undefined) c.createdAt = c.updatedAt || Date.now();
+      });
+      state.guides.forEach(g => {
+        (g.sections || []).forEach(s => {
+          (s.items || []).forEach(it => {
+            if (it.faved === undefined) it.faved = false;
+            if (it.group === undefined) it.group = '';
+          });
+        });
+      });
+      saveData();
+      renderAll();
+      showToast('导入成功 ♡');
+    } catch(err){
+      showToast('文件解析失败');
+      console.error(err);
+    }
+  };
+  reader.onerror = ()=> showToast('文件读取失败');
+  reader.readAsText(file);
+}
+
+function stripChapterPrefix(s){
+  return (s || '').replace(/^[一二三四五六七八九十百]+[、.．]\s*/, '').trim();
+}
+
+function parseMarkdownOrText(text){
+  const lines = text.split(/\r?\n/);
+  let series = '';
+  let guideTitle = '';
+  const sections = [];
+  let currentSection = null;
+  let currentGroup = '';
+  let currentItem = null;
+  let firstNonEmptySeen = false;
+  const isEmpty = (i) => (i < 0 || i >= lines.length || !lines[i].trim());
+
+  function ensureSection(){
+    if (!currentSection){
+      currentSection = { id: uid(), title: '未分类', items: [] };
+      sections.push(currentSection);
+    }
+  }
+  function startItem(title){
+    ensureSection();
+    currentItem = { id: uid(), title, content: '', faved: false, group: currentGroup };
+    currentSection.items.push(currentItem);
+  }
+
+  for (let i = 0; i < lines.length; i++){
+    const raw = lines[i];
+    const trimmed = raw.trim();
+    if (!trimmed) continue;
+
+    const cleaned = trimmed.replace(/^[-*+]\s+/, '').replace(/^\d+\.\s+/, '');
+    const h1 = trimmed.match(/^#\s+(.+)$/);
+    const h2 = trimmed.match(/^##\s+(.+)$/);
+    const h3 = trimmed.match(/^###\s+(.+)$/);
+    const h4 = trimmed.match(/^####\s+(.+)$/);
+    const bold = trimmed.match(/^\*\*(.+)\*\*$/);
+    const cnNum = trimmed.match(/^([一二三四五六七八九十百]+)[、.．]\s*(.+)$/);
+
+    if (!firstNonEmptySeen){
+      firstNonEmptySeen = true;
+      if (!h1 && !h2 && !h3 && !h4 && !bold && !cnNum){
+        guideTitle = trimmed;
+        continue;
+      }
+    }
+
+    if (h1){
+      const t = trimmed.replace(/^#\s+/, '').replace(/^\*\*(.+)\*\*$/, '$1').trim();
+      if (!series) series = t;
+      else if (!guideTitle) guideTitle = t;
+      continue;
+    }
+    if (h2){
+      currentSection = {
+        id: uid(),
+        title: trimmed.replace(/^##\s+/, '').replace(/^\*\*(.+)\*\*$/, '$1').trim(),
+        items: []
+      };
+      sections.push(currentSection);
+      currentGroup = '';
+      currentItem = null;
+      continue;
+    }
+    if (h3){
+      currentGroup = trimmed.replace(/^###\s+/, '').replace(/^\*\*(.+)\*\*$/, '$1').trim();
+      currentItem = null;
+      continue;
+    }
+    if (h4){
+      startItem(trimmed.replace(/^####\s+/, '').replace(/^\*\*(.+)\*\*$/, '$1').trim());
+      continue;
+    }
+    if (bold){
+      startItem(trimmed.replace(/^\*\*(.+)\*\*$/, '$1').trim());
+      continue;
+    }
+    if (cnNum){
+      currentSection = { id: uid(), title: trimmed, items: [] };
+      sections.push(currentSection);
+      currentGroup = '';
+      currentItem = null;
+      continue;
+    }
+
+    const isShort = cleaned.length >= 2 && cleaned.length <= 25;
+    const noCnPunc = !/[。！？；：，、]/.test(cleaned);
+    const prevEmptyOrBoundary = isEmpty(i-1) || (i > 0 && (
+      lines[i-1].trim().match(/^#{1,4}\s+/) ||
+      lines[i-1].trim().match(/^([一二三四五六七八九十百]+)[、.．]/) ||
+      lines[i-1].trim().match(/^\*\*(.+)\*\*$/)
+    ));
+    const canStartNew = !currentItem || (currentItem && currentItem.content);
+
+    if (isShort && noCnPunc && prevEmptyOrBoundary && canStartNew){
+      startItem(cleaned);
+      continue;
+    }
+
+    if (currentItem){
+      if (currentItem.content) currentItem.content += '\n' + trimmed;
+      else currentItem.content = trimmed;
+    } else if (!guideTitle){
+      guideTitle = trimmed;
+    }
+  }
+
+  let seriesName = series || '';
+  if (!seriesName && guideTitle){
+    const m = guideTitle.match(/[·\-—]\s*(.+)$/);
+    if (m) seriesName = m[1].trim();
+  }
+  if (!seriesName) seriesName = guideTitle || '未命名篇章';
+  if (!guideTitle) guideTitle = seriesName;
+
+  return { id: uid(), title: guideTitle, series: seriesName, sections };
+}
+
+function currentGuide(){
+  if (!state.activeGuide) return null;
+  return state.guides.find(g => g.id === state.activeGuide) || null;
+}
+function countGuideFav(){
+  let n = 0;
+  state.guides.forEach(g => {
+    (g.sections || []).forEach(s => {
+      (s.items || []).forEach(it => { if (it.faved) n++; });
+    });
+  });
+  return n;
+}
+
+function renderGuideTabs(){
+  const wrap = $('guideTabs');
+  wrap.innerHTML = '';
+  wrap.style.display = 'flex';
+
+  state.guides.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'guide-tab' + (g.id === state.activeGuide && !state.guideShowFav ? ' active' : '');
+    btn.textContent = g.series;
+    btn.onclick = ()=>{
+      state.activeGuide = g.id;
+      state.activeGuideSection = null;
+      state.guideShowFav = false;
+      renderGuideAll();
+    };
+    wrap.appendChild(btn);
+  });
+
+  if (state.guides.length > 0){
+    const favBtn = document.createElement('button');
+    favBtn.className = 'guide-tab' + (state.guideShowFav ? ' active' : '');
+    favBtn.textContent = '★ 收藏';
+    favBtn.onclick = ()=>{
+      state.guideShowFav = true;
+      renderGuideAll();
+    };
+    wrap.appendChild(favBtn);
+  }
+
+  const setBtn = document.createElement('button');
+  setBtn.className = 'guide-tab manage-tab';
+  setBtn.textContent = '⚙ 管理';
+  setBtn.onclick = openGuideManage;
+  wrap.appendChild(setBtn);
+}
+
+function renderGuideLeft(){
+  const left = $('chapterList');
+  left.innerHTML = '';
+
+  const inner = document.createElement('div');
+  inner.className = 'guide-chapters-inner';
+  left.appendChild(inner);
+
+  if (state.guideShowFav) return;
+
+  const g = currentGuide();
+  if (!g || !g.sections.length) return;
+
+  g.sections.forEach(sec => {
+    const el = document.createElement('div');
+    el.className = 'chapter-item' + (state.activeGuideSection === sec.id ? ' active' : '');
+    el.textContent = stripChapterPrefix(sec.title);
+    el.onclick = ()=>{
+      inner.querySelectorAll('.chapter-item').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+      state.activeGuideSection = sec.id;
+      renderGuideRight();
+      const rightEl = $('guideContent');
+      if (rightEl) rightEl.scrollTop = 0;
+    };
+    inner.appendChild(el);
+  });
+}
+
+function renderGuideRight(){
+  const right = $('guideContent');
+  right.innerHTML = '';
+
+  if (state.guideShowFav){
+    const favs = [];
+    state.guides.forEach(g => {
+      (g.sections || []).forEach(s => {
+        (s.items || []).forEach(it => {
+          if (it.faved) favs.push({ guide: g, section: s, item: it });
+        });
+      });
+    });
+    if (favs.length === 0){
+      right.innerHTML = `<div class="guide-empty">
+        <div class="guide-empty-emoji">🌟</div>
+        还没有收藏任何条目
+        <div class="guide-empty-sub">打开条目点"☆ 收藏"</div>
+      </div>`;
+      return;
+    }
+    favs.forEach(({guide, section, item}) => {
+      const card = document.createElement('div');
+      card.className = 'guide-fav-card';
+      card.innerHTML = `
+        <div class="guide-fav-title"><span class="s">★</span>${escapeHtml(item.title)}</div>
+        <div class="guide-fav-meta">${escapeHtml(guide.series)} · ${escapeHtml(section.title)}${item.group ? ' · ' + escapeHtml(item.group) : ''}</div>
+      `;
+      card.onclick = ()=> openGuideItem(guide.id, section.id, item.id);
+      right.appendChild(card);
+    });
+    return;
+  }
+
+  const g = currentGuide();
+  if (!g){
+    right.innerHTML = `<div class="guide-empty">
+      <div class="guide-empty-emoji">📚</div>
+      还没有剧情指导
+      <div class="guide-empty-sub">点右下角 + 导入 md / txt</div>
+    </div>`;
+    return;
+  }
+
+  let sectionsToShow = g.sections;
+  if (state.activeGuideSection){
+    const s = g.sections.find(x => x.id === state.activeGuideSection);
+    if (s) sectionsToShow = [s];
+  }
+
+  sectionsToShow.forEach(sec => {
+    const secWrap = document.createElement('div');
+
+    const head = document.createElement('div');
+    head.className = 'guide-section-head';
+    head.innerHTML = `
+      <div class="eyebrow">STORY GUIDE · ${escapeHtml(g.series)}</div>
+      <div class="title">${escapeHtml(sec.title)}</div>
+    `;
+    secWrap.appendChild(head);
+
+    let lastGroup = null;
+    (sec.items || []).forEach(item => {
+      if (item.group && item.group !== lastGroup){
+        const grp = document.createElement('div');
+        grp.className = 'guide-right-group';
+        grp.textContent = item.group;
+        secWrap.appendChild(grp);
+        lastGroup = item.group;
+      }
+
+      const el = document.createElement('div');
+      el.className = 'guide-item' + (item.faved ? ' faved' : '');
+      el.innerHTML = `
+        <div class="guide-item__glow"></div>
+        <div class="guide-item__shine"></div>
+        <div class="guide-item__body">
+          <div class="guide-item__title">${escapeHtml(item.title)}</div>
+          <div class="guide-item__excerpt">${escapeHtml(item.content || '')}</div>
+        </div>
+        <div class="guide-item__fav${item.faved ? ' on' : ''}">★</div>
+      `;
+      el.onclick = (e) => {
+        if (e.target.closest('.guide-item__fav')) {
+          e.stopPropagation();
+          item.faved = !item.faved;
+          saveData();
+          renderGuideAll();
+          showToast(item.faved ? '已收藏 ♡' : '已取消收藏');
+          return;
+        }
+        openGuideItem(g.id, sec.id, item.id);
+      };
+      secWrap.appendChild(el);
+    });
+
+    right.appendChild(secWrap);
+  });
+}
+
+function renderGuideAll(){
+  renderGuideTabs();
+  renderGuideLeft();
+  renderGuideRight();
+}
+
+function openGuideItem(guideId, sectionId, itemId){
+  const guide = state.guides.find(g => g.id === guideId);
+  if (!guide) return;
+  const section = guide.sections.find(s => s.id === sectionId);
+  if (!section) return;
+  const item = section.items.find(i => i.id === itemId);
+  if (!item) return;
+
+  currentGuideItem = { guideId, sectionId, itemId };
+  const meta = `${guide.series} · ${section.title}${item.group ? ' · ' + item.group : ''}`;
+  $('gDetailTitle').textContent = item.title;
+  $('gDetailMeta').textContent = meta;
+  $('gDetailContent').textContent = item.content || '（暂无正文）';
+  $('gDetailFavBtn').textContent = item.faved ? '★ 已收藏' : '☆ 收藏';
+  $('guideItemOverlay').classList.add('show');
+}
+function closeGuideItem(){
+  $('guideItemOverlay').classList.remove('show');
+  currentGuideItem = null;
+}
+
+function openGuideManage(){
+  renderGuideManageList();
+  $('guideManageOverlay').classList.add('show');
+}
+function closeGuideManage(){ $('guideManageOverlay').classList.remove('show'); }
+function renderGuideManageList(){
+  const list = $('guideManageList');
+  list.innerHTML = '';
+  if (state.guides.length === 0){
+    list.innerHTML = `<div style="text-align:center;padding:20px;color:var(--ink-3);font-size:13px;">还没有导入任何剧情指导</div>`;
+    return;
+  }
+  state.guides.forEach(g => {
+    const totalItems = (g.sections || []).reduce((s, sec) => s + (sec.items || []).length, 0);
+    const row = document.createElement('div');
+    row.className = 'cat-manage-row';
+    row.innerHTML = `
+      <div class="cover-preview" style="background:var(--purple-soft);color:var(--purple-2);">🎬</div>
+      <div class="cat-manage-name">
+        ${escapeHtml(g.series)}
+        <div class="sub">${g.sections.length} 章节 · ${totalItems} 条目</div>
+      </div>
+      <div class="cat-manage-actions">
+        <button class="icon-btn rename-guide" title="重命名">✎</button>
+        <button class="icon-btn del del-guide" title="删除">✕</button>
+      </div>
+    `;
+    row.querySelector('.rename-guide').onclick = ()=> openGuideRename(g.id);
+    row.querySelector('.del-guide').onclick = ()=> deleteGuide(g.id);
+    list.appendChild(row);
+  });
+}
+function deleteGuide(id){
+  const g = state.guides.find(x => x.id === id);
+  if (!g) return;
+  if (!confirm(`确定删除「${g.series}」吗？它下面的所有章节和条目都会一并删除。`)) return;
+  state.guides = state.guides.filter(x => x.id !== id);
+  if (state.activeGuide === id){
+    state.activeGuide = state.guides.length > 0 ? state.guides[0].id : null;
+    state.activeGuideSection = null;
+  }
+  saveData();
+  renderGuideManageList();
+  renderGuideAll();
+  showToast('已删除');
+}
+function openGuideRename(id){
+  const g = state.guides.find(x => x.id === id);
+  if (!g) return;
+  renamingGuideId = id;
+  $('gRenameInput').value = g.series;
+  $('guideRenameOverlay').classList.add('show');
+  setTimeout(()=> $('gRenameInput').focus(), 200);
+}
+
+function renderGuidePreview(guide, fileName){
+  const body = $('guidePreviewBody');
+  const totalItems = (guide.sections || []).reduce((s, sec) => s + (sec.items || []).length, 0);
+  let groupsCount = 0;
+  guide.sections.forEach(sec => {
+    const groups = new Set();
+    (sec.items || []).forEach(it => { if (it.group) groups.add(it.group); });
+    groupsCount += groups.size;
+  });
+  body.innerHTML = `
+    <div class="import-preview">
+      <div class="import-preview-row"><span class="k">文件</span><span class="v">${escapeHtml(fileName || '')}</span></div>
+      <div class="import-preview-row"><span class="k">指导集</span><span class="v">${escapeHtml(guide.title)}</span></div>
+      <div class="import-preview-row"><span class="k">篇章名</span><span class="v">${escapeHtml(guide.series)}</span></div>
+      <div class="import-preview-row"><span class="k">章节数</span><span class="v">${guide.sections.length}</span></div>
+      ${groupsCount ? `<div class="import-preview-row"><span class="k">子章节数</span><span class="v">${groupsCount}</span></div>` : ''}
+      <div class="import-preview-row"><span class="k">条目数</span><span class="v">${totalItems}</span></div>
+    </div>
+    <div style="font-size:12px;color:var(--ink-2);line-height:1.7;padding:4px 4px 0;">
+      前 3 个章节预览：<br>
+      ${guide.sections.slice(0, 3).map(s => '· ' + escapeHtml(s.title) + ' (' + (s.items || []).length + ' 条)').join('<br>')}
+    </div>
+  `;
+}
+
+function switchMode(mode){
+  state.currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+  const glider = $('modeGlider');
+  glider.style.transform = mode === 'guide' ? 'translateX(100%)' : 'translateX(0)';
+  $('cardView').classList.toggle('active', mode === 'card');
+  $('guideView').classList.toggle('active', mode === 'guide');
+  renderTitle();
+  if (mode === 'guide') renderGuideAll();
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+function renderAll(){
+  renderAvatar();
+  renderTitle();
+  renderTabs();
+  renderFilterRow();
+  renderStack();
+  renderGuideAll();
+}
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', function(){
+    switchMode(this.dataset.mode);
+  });
+});
+
+$('userAvatar').onclick = ()=> $('userAvatarInput').click();
+$('userAvatarInput').onchange = async (e)=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const dataUrl = await compressImage(file, 200, 0.75);
+    state.userAvatar = dataUrl;
+    renderAvatar();
+    saveData();
+    showToast('头像已更新 ♡');
+  } catch(err){ showToast('图片处理失败'); }
+  e.target.value = '';
+};
+
+$('titleDisplay').onclick = ()=>{
+  $('editMainTitle').value = state.mainTitle || '';
+  $('editSubtitle').value = state.subtitle || '';
+  $('titleOverlay').classList.add('show');
+};
+$('titleCancelBtn').onclick = ()=> $('titleOverlay').classList.remove('show');
+$('titleSaveBtn').onclick = ()=>{
+  state.mainTitle = $('editMainTitle').value.trim() || '卡片档案';
+  state.subtitle = $('editSubtitle').value.trim();
+  $('titleOverlay').classList.remove('show');
+  renderTitle();
+  saveData();
+  showToast('标题已更新 ♡');
+};
+$('titleOverlay').onclick = (e)=>{ if (e.target.id === 'titleOverlay') $('titleOverlay').classList.remove('show'); };
+
+$('searchInput').addEventListener('input', ()=>{
+  renderStack();
+  renderTitle();
+});
+
+$('cardGrid').addEventListener('click', (e)=>{
+  const favBtn = e.target.closest('[data-card-fav]');
+  if (favBtn){
+    e.stopPropagation();
+    const c = state.cards.find(x => x.id === favBtn.dataset.cardFav);
+    if (c){
+      c.pinned = !c.pinned;
+      saveData();
+      renderStack();
+      renderTitle();
+      showToast(c.pinned ? '已收藏 ♡' : '已取消收藏');
+    }
+    return;
+  }
+  const cardEl = e.target.closest('[data-card]');
+  if (cardEl) openDetailModal(cardEl.dataset.card);
+});
+
+$('detailOverlay').onclick = (e)=>{ if (e.target.id === 'detailOverlay') closeDetailModal(); };
+$('detailCloseBtn').onclick = closeDetailModal;
+$('detailCopyBtn').onclick = ()=>{
+  const card = state.cards.find(c => c.id === currentDetailId);
+  if (card) copyText(card.content, $('detailCopyBtn'));
+};
+$('detailEditBtn').onclick = ()=>{
+  const card = state.cards.find(c => c.id === currentDetailId);
+  if (card){ closeDetailModal(); openEditModal(card); }
+};
+$('detailPinBtn').onclick = ()=>{
+  const card = state.cards.find(c => c.id === currentDetailId);
+  if (card){
+    card.pinned = !card.pinned;
+    saveData();
+    $('detailPinBtn').textContent = card.pinned ? '★ 已收藏' : '☆ 收藏';
+    renderAll();
+    showToast(card.pinned ? '已收藏 ♡' : '已取消收藏');
+  }
+};
+$('detailDelBtn').onclick = ()=>{
+  const id = currentDetailId;
+  if (!id) return;
+  if (!confirm('确定删除这条记录吗？此操作无法撤销。')) return;
+  state.cards = state.cards.filter(c => c.id !== id);
+  saveData();
+  closeDetailModal();
+  renderAll();
+  showToast('已删除');
+};
+
+$('fabAdd').onclick = ()=>{
+  if (state.currentMode === 'guide') {
+    $('guideImportInput').click();
+  } else {
+    openAddModal();
+  }
+};
+$('cancelBtn').onclick = closeModal;
+$('saveBtn').onclick = saveEntry;
+$('overlay').onclick = (e)=>{ if (e.target.id === 'overlay') closeModal(); };
+$('fPinned').addEventListener('change', updateToggleLabel);
+
+$('catManageCloseBtn').onclick = closeCatManage;
+$('catManageOverlay').onclick = (e)=>{ if (e.target.id === 'catManageOverlay') closeCatManage(); };
+$('catAddNewBtn').onclick = ()=> openCatModal(null);
+$('catCancelBtn').onclick = closeCatModal;
+$('catSaveBtn').onclick = saveCategory;
+$('catOverlay').onclick = (e)=>{ if (e.target.id === 'catOverlay') closeCatModal(); };
+$('uploadCoverBtn').onclick = ()=> $('coverFileInput').click();
+$('clearCoverBtn').onclick = ()=>{ pendingCoverData = null; updateCoverPreview(); };
+$('coverFileInput').onchange = async (e)=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  try { pendingCoverData = await compressImage(file, 200, 0.75); updateCoverPreview(); }
+  catch(err){ showToast('图片处理失败'); }
+  e.target.value = '';
+};
+
+$('exportBtn').onclick = exportData;
+$('importBtn').onclick = ()=> $('importFileInput').click();
+$('importFileInput').onchange = (e)=>{
+  const file = e.target.files[0];
+  importData(file);
+  e.target.value = '';
+};
+
+$('guideItemOverlay').onclick = (e)=>{ if (e.target.id === 'guideItemOverlay') closeGuideItem(); };
+$('gDetailCloseBtn').onclick = closeGuideItem;
+$('gDetailFavBtn').onclick = ()=>{
+  if (!currentGuideItem) return;
+  const guide = state.guides.find(g => g.id === currentGuideItem.guideId);
+  const section = guide.sections.find(s => s.id === currentGuideItem.sectionId);
+  const item = section.items.find(i => i.id === currentGuideItem.itemId);
+  item.faved = !item.faved;
+  saveData();
+  $('gDetailFavBtn').textContent = item.faved ? '★ 已收藏' : '☆ 收藏';
+  renderGuideAll();
+  showToast(item.faved ? '已收藏 ♡' : '已取消收藏');
+};
+$('gDetailEditBtn').onclick = ()=>{
+  if (!currentGuideItem) return;
+  const guide = state.guides.find(g => g.id === currentGuideItem.guideId);
+  const section = guide.sections.find(s => s.id === currentGuideItem.sectionId);
+  const item = section.items.find(i => i.id === currentGuideItem.itemId);
+  editingGuideItem = { ...currentGuideItem };
+  $('gEditTitle').value = item.title;
+  $('gEditContent').value = item.content;
+  $('guideItemOverlay').classList.remove('show');
+  $('guideEditOverlay').classList.add('show');
+};
+$('gDetailDelBtn').onclick = ()=>{
+  if (!currentGuideItem) return;
+  if (!confirm('确定删除这条剧情吗？此操作无法撤销。')) return;
+  const guide = state.guides.find(g => g.id === currentGuideItem.guideId);
+  const section = guide.sections.find(s => s.id === currentGuideItem.sectionId);
+  section.items = section.items.filter(i => i.id !== currentGuideItem.itemId);
+  saveData();
+  closeGuideItem();
+  renderGuideAll();
+  showToast('已删除');
+};
+
+$('gEditCancelBtn').onclick = ()=>{
+  $('guideEditOverlay').classList.remove('show');
+  editingGuideItem = null;
+};
+$('gEditSaveBtn').onclick = ()=>{
+  if (!editingGuideItem) return;
+  const guide = state.guides.find(g => g.id === editingGuideItem.guideId);
+  const section = guide.sections.find(s => s.id === editingGuideItem.sectionId);
+  const item = section.items.find(i => i.id === editingGuideItem.itemId);
+  const newTitle = $('gEditTitle').value.trim();
+  const newContent = $('gEditContent').value.trim();
+  if (!newTitle){ showToast('标题不能为空'); return; }
+  item.title = newTitle;
+  item.content = newContent;
+  saveData();
+  $('guideEditOverlay').classList.remove('show');
+  editingGuideItem = null;
+  renderGuideAll();
+  showToast('已保存 ♡');
+};
+$('guideEditOverlay').onclick = (e)=>{ if (e.target.id === 'guideEditOverlay') $('guideEditOverlay').classList.remove('show'); };
+
+$('guideManageCloseBtn').onclick = closeGuideManage;
+$('guideManageOverlay').onclick = (e)=>{ if (e.target.id === 'guideManageOverlay') closeGuideManage(); };
+
+$('gRenameCancelBtn').onclick = ()=>{
+  $('guideRenameOverlay').classList.remove('show');
+  renamingGuideId = null;
+};
+$('gRenameSaveBtn').onclick = ()=>{
+  if (!renamingGuideId) return;
+  const g = state.guides.find(x => x.id === renamingGuideId);
+  const name = $('gRenameInput').value.trim();
+  if (!name){ showToast('名称不能为空'); return; }
+  g.series = name;
+  saveData();
+  $('guideRenameOverlay').classList.remove('show');
+  renamingGuideId = null;
+  renderGuideManageList();
+  renderGuideAll();
+  showToast('已重命名 ♡');
+};
+$('guideRenameOverlay').onclick = (e)=>{ if (e.target.id === 'guideRenameOverlay') $('guideRenameOverlay').classList.remove('show'); };
+
+$('guideImportBtn').onclick = ()=> $('guideImportInput').click();
+$('guideImportInput').onchange = (e)=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    try {
+      const text = ev.target.result;
+      const guide = parseMarkdownOrText(text);
+      pendingImport = guide;
+      renderGuidePreview(guide, file.name);
+      $('guidePreviewOverlay').classList.add('show');
+    } catch(err){
+      showToast('解析失败');
+      console.error(err);
+    }
+  };
+  reader.onerror = ()=> showToast('文件读取失败');
+  reader.readAsText(file, 'UTF-8');
+  e.target.value = '';
+};
+
+$('guidePreviewCancelBtn').onclick = ()=>{
+  $('guidePreviewOverlay').classList.remove('show');
+  pendingImport = null;
+};
+$('guidePreviewConfirmBtn').onclick = ()=>{
+  if (!pendingImport) return;
+  const exist = state.guides.find(g => g.series === pendingImport.series);
+  if (exist){
+    if (!confirm(`已存在「${pendingImport.series}」，是否覆盖？`)) return;
+    state.guides = state.guides.filter(g => g.id !== exist.id);
+  }
+  state.guides.push(pendingImport);
+  state.activeGuide = pendingImport.id;
+  state.activeGuideSection = null;
+  state.guideShowFav = false;
+  saveData();
+  $('guidePreviewOverlay').classList.remove('show');
+  pendingImport = null;
+  closeGuideManage();
+  renderGuideAll();
+  showToast('导入成功 ♡');
+};
+
+loadData();
+</script>
+</body>
+</html>
